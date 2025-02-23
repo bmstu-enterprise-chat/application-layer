@@ -6,10 +6,13 @@ import {Button} from "@mui/material";
 import React from "react";
 
 type ChatProps = {
+  messages: Message[];
   ws: WebSocket | undefined;
+  messageArray: Message[];
+  setMessageArray: (msg: Message[]) => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({ws}) => {
+export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessageArray}) => {
   const {login, resetUser} = useUser();
 
   // при логауте закрываем соединение
@@ -26,12 +29,23 @@ export const Chat: React.FC<ChatProps> = ({ws}) => {
     <>
       <div className="chat">
         <div className="chat--header">
-          {/* имя нашего пользователя */}
           Сообщения от {login}
         </div>
 
         <div className="chat--body">
-          {/* здесь в будущем будут находиться карточки с сообщениями */}
+          {messageArray.length > 0 ?
+            <div className="chat--container">
+              {messageArray.map((msg: Message, index: number) => (
+                <div key={index} className="chat--msg">
+                  <MessageCard msg={msg}/>
+                </div>
+              ))}
+            </div>
+            :
+            <div className="chat--no-msg">
+              <div style={{fontSize: '2em', color: 'gray'}}>Здесь будут сообщения</div>
+            </div>
+          }
         </div>
 
         <Input ws={ws} setMessageArray={setMessageArray}/>
