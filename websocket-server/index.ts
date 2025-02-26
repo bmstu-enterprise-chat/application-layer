@@ -96,6 +96,7 @@ wss.on('connection', (websocketConnection: WebSocket, req: Request) => {
     const message: Message = JSON.parse(messageString)
     message.username = message.username ?? username
 
+    void sendMessageToOtherUsers(message.username ,message)
     void sendMsgToTransportLevel(message)
   })
 

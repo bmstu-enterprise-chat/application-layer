@@ -2,6 +2,9 @@ import React, {useState} from "react";
 import {useUser} from "../../hooks/useUser";
 import {Button, TextField} from '@mui/material';
 import {hostname} from "../../consts";
+import "../../style.css"
+import "./Login.css"
+
 
 type LoginProps = {
   ws: WebSocket | undefined;
@@ -40,22 +43,63 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
 
   return (
     <>
-      <div className="login">
-        <div className="login--card">
-          <div className="login--header">Вход</div>
-
-          <TextField id="outlined-basic" label="Введите имя" variant="outlined"
-            className="login--input"
-            value={userName}
-            onChange={handleChangeLogin}
-          />
-
-          <Button variant="contained"
-                  onClick={handleClickSignInBtn}
-          >
-            Войти
-          </Button>
-
+      <div className="home-frame1">
+        <img
+          src="/external/rectangle18604-gcoi-2000w.png"
+          alt="Rectangle18604"
+          className="home-rectangle11"
+        />
+        <div className="home-frame-app-bar1">
+          <div className="home-frame-paper1">
+            <div className="home-frame-toolbar1">
+              <div className="home-left-side1">
+                <button className="home-frame-icon-button1">
+                  <div className="home-frame-icon1">
+                    <div className="home-menu-filled1">
+                      <img
+                        src="/external/icons8chat5018612-f9qi-200h.png"
+                        alt="icons8chat5018612"
+                        className="home-icons8chat5011"
+                      />
+                    </div>
+                  </div>
+                </button>
+                <div className="home-frame-typography1">
+                  <span className="home-text10 typographyh6">Чат-комната</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="home-container2">
+          <div className="home-frame-card-header1">
+            <div className="home-content1">
+              <span className="home-text11 typographyh5">Войти</span>
+              <span className="home-text12 typographybody2">
+                Начните общение прямо сейчас
+              </span>
+            </div>
+          </div>
+          <div className="home-card-content">
+            <div className="home-form">
+              <div className="home-frame-text-field1">
+                <div className="home-input1">
+                  <div className="home-content2">
+                    <TextField id="outlined-basic" label="Введите имя" variant="outlined"
+                       className="home-text13 inputvalue"
+                       value={userName}
+                       onChange={handleChangeLogin}
+                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Button className="home-frame-button1" onClick={handleClickSignInBtn}>
+              <div className="home-base1">
+                <span className="home-text14 buttonlarge">Вход</span>
+              </div>
+            </Button>
+          </div>
         </div>
       </div>
     </>

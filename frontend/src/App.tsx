@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
+import './style.css'
 import {useUser} from "./hooks/useUser";
 import {Login} from "./components/Login/Login";
 import {hostname, Message} from "./consts";
