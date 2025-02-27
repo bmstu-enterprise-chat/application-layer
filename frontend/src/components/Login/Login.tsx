@@ -44,11 +44,6 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
   return (
     <>
       <div className="home-frame1">
-        <img
-          src="/external/rectangle18604-gcoi-2000w.png"
-          alt="Rectangle18604"
-          className="home-rectangle11"
-        />
         <div className="home-frame-app-bar1">
           <div className="home-frame-paper1">
             <div className="home-frame-toolbar1">
@@ -102,6 +97,12 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
           </div>
         </div>
       </div>
+      <img
+          src="/external/rectangle18604-gcoi-2000w.png"
+          alt="Rectangle18604"
+          className="home-rectangle11"
+        />
+
     </>
   );
 }

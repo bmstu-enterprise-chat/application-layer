@@ -30,11 +30,6 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
   return (
     <>
       <div className="home-frame2">
-        <img
-          src="/external/rectangle18604-bse-2000w.png"
-          alt="Rectangle18604"
-          className="home-rectangle12"
-        />
         <div className="home-frame-app-bar2">
           <div className="home-frame-paper2">
             <div className="home-frame-toolbar2">
@@ -83,19 +78,27 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
               <div style={{fontSize: '2em', color: 'gray'}}>Здесь будут сообщения</div>
             </div>
           }
-        </div>
-        <Input ws={ws} setMessageArray={setMessageArray}/>
-        <Button variant="contained"
-                onClick={handleClickLogoutBtn}
-                style={{
+                <Button variant="contained"
+                  className="exit-button"
+                  onClick={handleClickLogoutBtn}
+                  style={{
                   height: 'fit-content',
                   margin: '1em'
-                }}
-        >
-          Выход
-        </Button>
+          }}
+      >
+        Выход
+      </Button>
 
+        </div>
+        <Input ws={ws} setMessageArray={setMessageArray}/>
+        
       </div>
+      <img
+        src="/external/rectangle18604-bse-2000w.png"
+        alt="Rectangle18604"
+        className="home-rectangle12"
+      />
+
 
     </>
   );

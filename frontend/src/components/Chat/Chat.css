@@ -15,4 +15,8 @@
     height: 85vh;
   }
 
-  
+  .exit-button{
+    position:absolute !important;
+    right:2%;
+    top:10px;
+  }
