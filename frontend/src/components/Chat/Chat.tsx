@@ -29,8 +29,8 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
 
   return (
     <>
-      <div className="home-frame2">
-        <div className="home-frame-app-bar2">
+    <div className="home-frame1">
+      <div className="home-frame-app-bar2">
           <div className="home-frame-paper2">
             <div className="home-frame-toolbar2">
               <div className="home-left-side2">
@@ -52,6 +52,7 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
             </div>
           </div>
         </div>
+      <div className="home-frame2">
         <div className="home-lg1200px">
           <div className="home-title">
             <span className="home-text16 typographyh5">Сообщения</span>
@@ -78,16 +79,6 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
               <div style={{fontSize: '2em', color: 'gray'}}>Здесь будут сообщения</div>
             </div>
           }
-                <Button variant="contained"
-                  className="exit-button"
-                  onClick={handleClickLogoutBtn}
-                  style={{
-                  height: 'fit-content',
-                  margin: '1em'
-          }}
-      >
-        Выход
-      </Button>
 
         </div>
         <Input ws={ws} setMessageArray={setMessageArray}/>
@@ -98,8 +89,18 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
         alt="Rectangle18604"
         className="home-rectangle12"
       />
-
-
+      <Button variant="contained"
+                  className="exit-button"
+                  onClick={handleClickLogoutBtn}
+                  style={{
+                  height: 'fit-content',
+                  margin: '1em',
+                  zIndex:3
+                  }}
+                >
+                Выход
+      </Button>
+    </div>
     </>
   );
 }

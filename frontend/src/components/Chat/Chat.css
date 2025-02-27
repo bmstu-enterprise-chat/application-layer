@@ -18,5 +18,6 @@
   .exit-button{
     position:absolute !important;
     right:2%;
-    top:10px;
+    top:70px;
+    background-color: black !important;
   }

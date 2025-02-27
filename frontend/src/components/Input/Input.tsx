@@ -45,7 +45,7 @@ export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
                   placeholder="Введите сообщение"
                   value={message.data}
                   onChange={handleChangeMessage}
-                  style={{width: '100%', minHeight:'30px', maxHeight:'300px'}}
+                  style={{width: '100%', minHeight:'30px', maxHeight:'300px', background: 'none', border: 'none'}}
                 />
                 </div>
               </div>

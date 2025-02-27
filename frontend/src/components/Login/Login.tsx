@@ -76,18 +76,13 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
             </div>
           </div>
           <div className="home-card-content">
-            <div className="home-form">
-              <div className="home-frame-text-field1">
-                <div className="home-input1">
-                  <div className="home-content2">
-                    <TextField id="outlined-basic" label="Введите имя" variant="outlined"
+            <div className="home-content2">
+                    <TextField id="outlined-basic" variant="outlined"
                        className="home-text13 inputvalue"
                        value={userName}
                        onChange={handleChangeLogin}
+                       placeholder="Введите имя"
                      />
-                  </div>
-                </div>
-              </div>
             </div>
             <Button className="home-frame-button1" onClick={handleClickSignInBtn}>
               <div className="home-base1">

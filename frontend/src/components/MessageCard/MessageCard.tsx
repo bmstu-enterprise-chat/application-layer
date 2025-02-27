@@ -28,7 +28,7 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
           <div className={`${msg.username === login ? "msg--own" : "msg--alien"} msg--container`}>
         <div className={`${msg.username === login ? "msg--own--reverse" : "msg--alien--reverse"} msg`}>
 
-    <div className={`home-card2`}>
+    <div className={`home-card2 ${msg.username === login ? "msg--bg--own" : "msg--bg--alien"}`}>
       <div className="home-frame-card-header3">
         <div className="home-avatar-wrapper2">
           <div className="home-frame-avatar2">
@@ -39,7 +39,6 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
                 className="home-person-filled2"
               />
             </div>
-            <div className="home-minwidth2"></div>
           </div>
         </div>
         <div className="home-text21">
@@ -58,7 +57,7 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
           {msg.error ?
             <div style={{color: 'gray'}}>Ошибка при отправке: {msg.error}</div>
             :
-            <span className={`msg--text home-text24 typographybody2 ${msg.username === login ? "msg--bg--own" : "msg--bg--alien"}`}>
+            <span className={`msg--text home-text24 typographybody2`}>
               {msg.data}
             </span>          
           }         
