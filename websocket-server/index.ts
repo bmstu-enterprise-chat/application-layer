@@ -3,9 +3,10 @@ import axios from 'axios';
 import http from 'http';
 import ws, { type WebSocket } from 'ws';
 
-const port: number = 8001; // порт на котором будет развернут этот (вебсокет) сервер
+const port_native: number = 8001; // порт на котором будет развернут этот (вебсокет) сервер
+const port_outside: number = 8002; // порт на котором будет развернут этот (вебсокет) сервер
 const hostname = 'localhost'; // адрес вебсокет сервера
-const transportLevelPort = 8002; // порт сервера транспортного уровня
+const transportLevelPort = 8080; // порт сервера транспортного уровня
 const transportLevelHostname = '192.168.12.172'; // адрес сервера транспортного уровня
 
 interface Message {
@@ -34,8 +35,8 @@ app.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: number) 
 })
 
 // запуск сервера приложения
-server.listen(port, hostname, () => {
-  console.log(`Server started at http://${hostname}:${port}`)
+server.listen(port_native, hostname, () => {
+  console.log(`Server started at http://${hostname}:${port_native}`)
 })
 
 const wss = new ws.WebSocketServer({ server })

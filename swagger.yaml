@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  title: Application level WebSocket server API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8001
+    description: Default, native application level WebSocket server. Serves the end-users located on Earth.
+  - url: http://localhost:8002
+    description: Remote application level WebSocket server. Connects the users from Mars to the ones on Earth. 
+paths:
+  /api/receive:
+      post:
+        summary: Receive a message from transport level
+        description: |
+          Endpoint for receiving messages from the transport level server and distributing them to other users.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        responses:
+          '200':
+            description: Message received and processed successfully
+  /api/send:
+    post:
+      summary: Send a message to users in a chat.
+      description: |
+        This endpoint enables WebSocket clients to send each other messages.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        "200":
+          description: Message sent successfully
+        "500":
+          description: Internal server error
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Optional message ID
+        username:
+          type: string
+          description: Sender's username
+          required: true
+        data:
+          type: string
+          description: Message content
+        send_time:
+          type: string
+          format: date-time
+          description: Timestamp when message was sent
+        error:
+          type: string
+          description: Error message if something went wrong
+      required:
+        - username
+        - image
+        - send_time
+        - error
+
+tags:
+  - name: Messaging
+    description: Real-time chat operations
+  - name: Connections
+    description: WebSocket connection management
