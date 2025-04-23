@@ -85,9 +85,11 @@ function sendMessageToMarsUsers (username: string, message: Message): void {
   const msgString = JSON.stringify(message)
   for (const key in mars_users) {
     console.log(`[array] key: ${key}, users[keys]: ${JSON.stringify(users[key])} username: ${username}`)
-    mars_users[key].forEach(element => {
+    if (key !== username) {
+      mars_users[key].forEach(element => {
         element.ws.send(msgString)
-    })
+      })
+    }
   }
 }
 

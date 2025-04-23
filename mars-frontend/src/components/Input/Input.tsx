@@ -42,7 +42,8 @@ export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
               <div className="home-input2">
                 <div className="home-content3">
                 <input className="home-text25 inputvalue"
-                  placeholder="Введите сообщение"
+                  disabled
+                  placeholder="Отправка сообщений с Марса недоступна"
                   value={message.data}
                   onChange={handleChangeMessage}
                   style={{width: '100%', minHeight:'30px', maxHeight:'300px', background: 'none', border: 'none'}}
@@ -54,7 +55,7 @@ export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
               </div>
             </div>
           </div>
-          <Button className="home-frame-button2" onClick={handleClickSendMessBtn} style={{margin: '0 2em',padding: '0 2em'}}>
+          <Button className="home-frame-button2" disabled onClick={handleClickSendMessBtn} style={{margin: '0 2em',padding: '0 2em'}}>
             <div className="home-base2">
               <span className="home-text27 buttonlarge">Отправить</span>
             </div>
