@@ -92,9 +92,7 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
           </div>
         </div>
       </div>
-      <img
-          src="/external/rectangle18604-gcoi-2000w.png"
-          alt="Rectangle18604"
+      <div
           className="home-rectangle11"
         />
 

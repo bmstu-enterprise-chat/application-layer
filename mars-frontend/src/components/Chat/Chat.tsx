@@ -84,9 +84,7 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
         <Input ws={ws} setMessageArray={setMessageArray}/>
         
       </div>
-      <img
-        src="/external/rectangle18604-bse-2000w.png"
-        alt="Rectangle18604"
+      <div
         className="home-rectangle12"
       />
       <Button variant="contained"
