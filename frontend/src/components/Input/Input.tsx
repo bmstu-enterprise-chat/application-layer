@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useUser} from "../../hooks/useUser";
-import {Message} from "../../consts";
+import {Message, TYPING_SYMBOL} from "../../consts";
 import {Button, TextField} from "@mui/material";
 import "../../style.css"
 import "./Input.css"
@@ -13,24 +13,59 @@ type InputProps = {
 export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
   const {login} = useUser();
   const [message, setMessage] = useState<Message>({data: ''});
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout>();
 
-  // в инпуте делаем обработчик на изменение состояния инпута
-  const handleChangeMessage = (event: any) => {
-    const newMsg: Message = {
-      data: event.target.value,
-      username: login,
-      send_time: String(new Date()),
-    };
-    setMessage(newMsg);
+const handleChangeMessage = (event: any) => {
+  const newMsg: Message = {
+    data: event.target.value,
+    username: login,
+    send_time: String(new Date()),
   };
+  setMessage(newMsg);
+
+  if (event.target.value.trim().length === 0) {
+    return; // Не отправляем статус для пустого ввода
+  }
+
+  // Отправляем сообщение о наборе текста
+  if (ws && login) {
+    // Очищаем предыдущий таймер
+    if (typingTimeout) clearTimeout(typingTimeout);
+    
+    // Отправляем сообщение о наборе
+    const typingMsg: Message = {
+      username: login,
+      data: TYPING_SYMBOL, // Используем специальный символ
+      send_time: new Date().toISOString()
+    };
+    ws.send(JSON.stringify(typingMsg));
+    
+    // Устанавливаем таймер для отправки сообщения о прекращении набора
+    const timeout = setTimeout(() => {
+      const stopTypingMsg: Message = {
+        username: login,
+        data: '',
+        send_time: new Date().toISOString()
+      };
+      ws.send(JSON.stringify(stopTypingMsg));
+    }, 2000);
+    setTypingTimeout(timeout);
+  }
+};
+
 
   // на кнопку Отправить мы должны посать сообщение по вебсокету
   const handleClickSendMessBtn = () => {
-    if (login && ws) {
-      message.send_time = '2024-02-23T13:45:41Z';
-      const msgJSON = JSON.stringify(message);
+    if (login && ws && message.data?.trim()) {
+      const messageToSend = {
+        ...message,
+        send_time: new Date().toISOString(), // Используем текущее время
+        username: login // Добавляем username на всякий случай
+      };
+      const msgJSON = JSON.stringify(messageToSend);
       ws.send(msgJSON);
-      setMessageArray((currentMsgArray: any) => [...currentMsgArray, message]);
+      setMessageArray((currentMsgArray: any) => [...currentMsgArray, messageToSend]);
+      setMessage({ data: '' });
     }
   };
 
@@ -41,9 +76,10 @@ export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
             <div className="home-frame-text-field2">
               <div className="home-input2">
                 <div className="home-content3">
-                <input className="home-text25 inputvalue"
+                <input
+                  className="home-text25 inputvalue"
                   placeholder="Введите сообщение"
-                  value={message.data}
+                  value={message.data || ''} // Добавляем fallback на случай undefined
                   onChange={handleChangeMessage}
                   style={{width: '100%', minHeight:'30px', maxHeight:'300px', background: 'none', border: 'none'}}
                 />

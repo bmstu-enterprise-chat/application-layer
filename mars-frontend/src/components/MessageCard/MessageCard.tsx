@@ -12,15 +12,20 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
   const {login} = useUser();
 
   // функция для форматирования времени, чтобы оно красиво отображалось
-  function formatTime(isoDateTime: string | number | Date) {
-    const dateTime = new Date(isoDateTime);
-    return dateTime.toLocaleString('en-US', {
-      timeZone: 'UTC',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: false
-    });
+  function formatTime(isoDateTime: string | undefined) {
+    if (!isoDateTime) return '';
+  
+    try {
+      const dateTime = new Date(isoDateTime);
+      return dateTime.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch (e) {
+      console.error('Error formatting time:', e);
+      return '';
+    }
   }
 
   return (
@@ -47,9 +52,9 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
       </div>
       <div className="home-frame-card-content3">
         <div className="home-frame-typography5">
-          <span className="home-text23 typographybody2">
-          {formatTime(msg.send_time ?? String(new Date()))}
-          </span>
+        <span className="home-text23 typographybody2">
+          {msg.send_time ? formatTime(msg.send_time) : 'Неизвестное время'}
+        </span>
         </div>
       </div>
       <div className="home-frame-card-content4">

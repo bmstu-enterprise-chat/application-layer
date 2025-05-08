@@ -12,14 +12,18 @@ type ChatProps = {
   ws: WebSocket | undefined;
   messageArray: Message[];
   setMessageArray: (msg: Message[]) => void;
+  typingUsers: string[];
+  setTypingUsers: (us: string[]) => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessageArray}) => {
+export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessageArray, typingUsers, setTypingUsers}) => {
   const {login, resetUser} = useUser();
 
   // при логауте закрываем соединение
   const handleClickLogoutBtn = () => {
     resetUser();
+    setMessageArray([]);
+    setTypingUsers([]); // Очищаем статусы печатающих пользователей
     if (ws) {
       ws.close(4000, login);
     } else {
@@ -80,6 +84,18 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
             </div>
           }
 
+        </div>
+        <div className="typing-status" style={{
+          minHeight: '20px',
+          color: 'gray',
+          fontStyle: 'italic',
+          margin: '0.5em 0'
+        }}>
+        {typingUsers.length > 0 && (
+          typingUsers.length === 1 
+            ? `${typingUsers[0]} печатает...`
+            : `${typingUsers.slice(0, -1).join(', ')} и ${typingUsers.slice(-1)[0]} печатают...`
+        )}
         </div>
         <Input ws={ws} setMessageArray={setMessageArray}/>
         
