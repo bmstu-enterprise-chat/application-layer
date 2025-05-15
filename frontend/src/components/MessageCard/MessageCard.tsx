@@ -28,6 +28,24 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
     }
   }
 
+// System message styling
+if (msg.username === 'System') {
+  return (
+    <div className="system-message">
+      <div className={`system-message-content ${msg.error ? 'error' : 'success'}`}>
+        {msg.error ? (
+          <span style={{color: '#ff4444'}}>⚠️ {msg.error}</span>
+        ) : (
+          <span style={{color: '#4CAF50'}}>✓ {msg.data}</span>
+        )}
+        <span className="system-message-time">
+          {msg.send_time ? formatTime(msg.send_time) : ''}
+        </span>
+      </div>
+    </div>
+  );
+}
+
   return (
     <>
           <div className={`${msg.username === login ? "msg--own" : "msg--alien"} msg--container`}>

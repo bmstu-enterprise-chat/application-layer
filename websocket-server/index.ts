@@ -6,9 +6,10 @@ import exp from 'constants';
 
 const port_earth: number = 8001; // порт на котором будет развернут этот (вебсокет) сервер
 const port_mars: number = 8002; // порт на котором будет развернут этот (вебсокет) сервер
-const hostname = 'localhost'; // адрес вебсокет сервера
+const hostname = '0.0.0.0'; // адрес вебсокет сервера
 const transportLevelPort = 8080; // порт сервера транспортного уровня
-const transportLevelHostname = '192.168.12.172'; // адрес сервера транспортного уровня
+const transportLevelHostname = '10.147.17.22'; // адрес сервера транспортного уровня
+const TYPING_SYMBOL = '\u200B__TYPING__\u200B'; // Специальный символ для статуса "печатает"
 
 interface Message {
   id?: number
@@ -16,6 +17,12 @@ interface Message {
   data?: string
   send_time?: string
   error?: string
+}
+
+interface Message_to_transport{
+    sender: string,
+    data: string,
+    send_time: string
 }
 
 type Users = Record<string, Array<{
@@ -39,7 +46,7 @@ app_earth.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: nu
 })
 app_mars.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
   const message: Message = req.body
-  sendMessageToMarsUsers(message.username, message)
+  sendMessageToMarsUsers(message.username, transformToTransportMessage(message))
   res.sendStatus(200)
 })
 
@@ -56,23 +63,78 @@ const wss_mars = new ws.WebSocketServer({ server: server_mars })
 const users: Users = {}
 const mars_users: Users = {}
 
-const sendMsgToTransportLevel = async (message: Message): Promise<void> => {
-  const response = await axios.post(`http://${transportLevelHostname}:${transportLevelPort}/send`, message)
-  if (response.status !== 200) {
-    message.error = 'Error from transport level by sending message'
-    users[message.username].forEach(element => {
-      if (message.id === element.id) {
-        element.ws.send(JSON.stringify(message))
-      }
-    })
-  }
-  console.log('Response from transport level: ', response)
+function transformToTransportMessage(message: Message): Message_to_transport {
+  return {
+    sender: message.username,
+    data: message.data || '', // Provide default empty string if data is undefined
+    send_time: message.send_time || new Date().toISOString() // Use current time if not provided
+  };
 }
+
+const sendMsgToTransportLevel = async (message: Message, retries = 3): Promise<void> => {
+  try {
+    const transportMessage = transformToTransportMessage(message);
+    
+    const response = await axios.post(
+      `http://${transportLevelHostname}:${transportLevelPort}/send`,
+      transportMessage,
+      { timeout: 5000 } // 5 second timeout
+    );
+
+    // Send success notification to Earth client
+    if (response.status === 200) {
+      const successMsg: Message = {
+        username: 'System',
+        data: 'Сообщение отправлено',
+        send_time: new Date().toISOString()
+      };
+      users[message.username]?.forEach(element => {
+        element.ws.send(JSON.stringify(successMsg));
+      });
+    } else {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+  } catch (error) {
+    console.error(`Transport layer error (${retries} retries left):`, error);
+
+    // Prepare error message for Earth client
+    const errorMsg: Message = {
+      username: 'System',
+      send_time: new Date().toISOString(),
+      error: getTransportErrorText(error)
+    };
+
+    users[message.username]?.forEach(element => {
+      element.ws.send(JSON.stringify(errorMsg));
+    });
+
+    // Retry logic
+    if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, 1000 * (4 - retries))); // Exponential backoff
+      return sendMsgToTransportLevel(message, retries - 1);
+    }
+  }
+};
+
+
+function getTransportErrorText(error: any): string {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 500) {
+      return 'Пакет утерян на канальном уровне';
+    } else if (error.response?.status === 404) {
+      return 'Сообщение не отправлено (404)';
+    } else if (error.code === 'EHOSTUNREACH') {
+      return 'Транспортный сервер недоступен';
+    }
+  }
+  return 'Ошибка при отправке сообщения';
+}
+
 
 function sendMessageToOtherUsers (username: string, message: Message): void {
   const msgString = JSON.stringify(message)
   for (const key in users) {
-    console.log(`[array] key: ${key}, users[keys]: ${JSON.stringify(users[key])} username: ${username}`)
     if (key !== username) {
       users[key].forEach(element => {
         element.ws.send(msgString)
@@ -81,10 +143,10 @@ function sendMessageToOtherUsers (username: string, message: Message): void {
   }
 }
 
-function sendMessageToMarsUsers (username: string, message: Message): void {
+function sendMessageToMarsUsers (username: string, message: Message_to_transport): void {
   const msgString = JSON.stringify(message)
   for (const key in mars_users) {
-    console.log(`[array] key: ${key}, users[keys]: ${JSON.stringify(users[key])} username: ${username}`)
+    console.log(`Message ${message.data} sent to Mars`)
     if (key !== username) {
       mars_users[key].forEach(element => {
         element.ws.send(msgString)
@@ -124,7 +186,9 @@ wss_earth.on('connection', (websocketConnection: WebSocket, req: Request) => {
     message.username = message.username ?? username
 
     void sendMessageToOtherUsers(message.username ,message)
-    void sendMsgToTransportLevel(message)
+    if (!(message.username==="System" || message.data ==="" || message.data===TYPING_SYMBOL)){
+      void sendMsgToTransportLevel(message)
+    }
   })
 
   websocketConnection.on('close', (event: any) => {
@@ -159,13 +223,13 @@ wss_mars.on('connection', (websocketConnection: WebSocket, req: Request) => {
   console.log('users collection', mars_users)
 
   websocketConnection.on('message', (messageString: string) => {
-    console.log('[message] Received from ' + username + ': ' + messageString)
+    console.log('[message] Received from ' + username + ': ' + messageString);
 
-    const message: Message = JSON.parse(messageString)
-    message.username = message.username ?? username
+    const message: Message_to_transport = JSON.parse(messageString)
+    message.sender = message.sender ?? username
 
-    void sendMessageToMarsUsers(message.username ,message)
-  })
+    void sendMessageToMarsUsers(message.sender ,message)
+  });
 
   websocketConnection.on('close', (event: any) => {
     console.log(username, '[close] Соединение прервано', event)

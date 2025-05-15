@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useUser} from "../../hooks/useUser";
-import {Button, TextField} from '@mui/material';
+import {Button, TextField, Snackbar, Alert} from '@mui/material';
 import {hostname} from "../../consts";
 import "../../style.css"
 import "./Login.css"
@@ -15,6 +15,41 @@ type LoginProps = {
 export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
   const {login, setUser} = useUser();
   const [userName, setUsername] = useState(login);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"error" | "warning" | "info" | "success">("error");
+
+  const RESERVED_USERNAMES = ['System', 'Admin', 'Server'];
+
+  const showError = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity("error");
+    setOpenSnackbar(true);
+  };
+
+  const validateUsername = (username: string): boolean => {
+    if (!username || username.trim().length === 0) {
+      showError("Имя пользователя не может быть пустым");
+      return false;
+    }
+
+    if (RESERVED_USERNAMES.includes(username)) {
+      showError(`"${username}" - зарезервированное имя`);
+      return false;
+    }
+
+    if (username.length > 20) {
+      showError("Имя пользователя слишком длинное (макс. 20 символов)");
+      return false;
+    }
+
+    if (!/^[a-zA-Zа-яА-Я0-9_\- ]+$/.test(username)) {
+      showError("Имя может содержать только буквы, цифры, пробелы, дефисы и подчёркивания");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleChangeLogin = (event: any) => {
     setUsername(event.target.value);
@@ -22,6 +57,10 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
 
   // при авторизации регистрируем новое вебсокет соединеие
   const handleClickSignInBtn = () => {
+    if (!validateUsername(userName)) {
+      return;
+    }
+
     setUser({
       userInfo: {
         Data: {
@@ -29,16 +68,22 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
         },
       },
     });
+
     if (ws) {
       ws.close(1000, 'User enter userName');
     } else {
       console.log('ws.close(1000, User enter userName); dont work');
     }
+
     setWs(
       createWebSocket(
         `ws://${hostname}:8001/?username=${encodeURIComponent(userName)}`,
       ),
     );
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -52,7 +97,7 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
                   <div className="home-frame-icon1">
                     <div className="home-menu-filled1">
                       <img
-                        src="/external/icons8chat5018612-f9qi-200h.png"
+                        src="/external/icons8chat5018612-f9v-200h.png"
                         alt="icons8chat5018612"
                         className="home-icons8chat5011"
                       />
@@ -77,14 +122,21 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
           </div>
           <div className="home-card-content">
             <div className="home-content2">
-                    <TextField id="outlined-basic" variant="outlined"
-                       className="home-text13 inputvalue"
-                       value={userName}
-                       onChange={handleChangeLogin}
-                       placeholder="Введите имя"
-                     />
+              <TextField 
+                id="outlined-basic" 
+                variant="outlined"
+                className="home-text13 inputvalue"
+                value={userName}
+                onChange={handleChangeLogin}
+                placeholder="Введите имя"
+                onKeyPress={(e) => e.key === 'Enter' && handleClickSignInBtn()}
+              />
             </div>
-            <Button className="home-frame-button1" onClick={handleClickSignInBtn}>
+            <Button 
+              className="home-frame-button1" 
+              onClick={handleClickSignInBtn}
+              disabled={!userName || userName.trim().length === 0}
+            >
               <div className="home-base1">
                 <span className="home-text14 buttonlarge">Вход</span>
               </div>
@@ -92,12 +144,23 @@ export const Login: React.FC<LoginProps> = ({ws, setWs, createWebSocket}) => {
           </div>
         </div>
       </div>
-      <img
-          src="/external/rectangle18604-gcoi-2000w.png"
-          alt="Rectangle18604"
-          className="home-rectangle11"
-        />
+      
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
+      <img
+        src="/external/rectangle18604-gcoi-2000w.png"
+        alt="Rectangle18604"
+        className="home-rectangle11"
+      />
     </>
   );
 }
