@@ -71,7 +71,7 @@ function transformToTransportMessage(message: Message): Message_to_transport {
   };
 }
 
-const sendMsgToTransportLevel = async (message: Message, retries = 3): Promise<void> => {
+const sendMsgToTransportLevel = async (message: Message, retries = 0, verbose : Boolean = false): Promise<void> => {
   try {
     const transportMessage = transformToTransportMessage(message);
     
@@ -96,16 +96,20 @@ const sendMsgToTransportLevel = async (message: Message, retries = 3): Promise<v
     }
 
   } catch (error) {
-    console.error(`Transport layer error (${retries} retries left):`, error);
-
+    if (verbose === true){
+      console.error(`Transport layer error`);
+    }
+    console.error(`Transport layer error`);
     // Prepare error message for Earth client
     const errorMsg: Message = {
       username: 'System',
       send_time: new Date().toISOString(),
-      error: getTransportErrorText(error)
+      error: getTransportErrorText(error),
+      data: getTransportErrorText(error)
     };
-
+    console.log(`${message.username} about to get a call`)
     users[message.username]?.forEach(element => {
+      console.log(`${element.id}} got a call: ${errorMsg.data}`)
       element.ws.send(JSON.stringify(errorMsg));
     });
 
@@ -124,8 +128,12 @@ function getTransportErrorText(error: any): string {
       return 'Пакет утерян на канальном уровне';
     } else if (error.response?.status === 404) {
       return 'Сообщение не отправлено (404)';
+    } else if (error.response?.status===408) {
+      return 'Ошибка формата пересылки данных';
     } else if (error.code === 'EHOSTUNREACH') {
       return 'Транспортный сервер недоступен';
+    } else{
+      return `Ошибка ${error.code}: ${error.name}`;
     }
   }
   return 'Ошибка при отправке сообщения';
