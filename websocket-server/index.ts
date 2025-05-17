@@ -25,6 +25,12 @@ interface Message_to_transport{
     send_time: string
 }
 
+interface Message_from_transport{
+  sender: string,
+  payload: string,
+  send_time: string
+}
+
 type Users = Record<string, Array<{
   id: number
   ws: WebSocket
@@ -44,9 +50,9 @@ app_earth.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: nu
   sendMessageToOtherUsers(message.username, message)
   res.sendStatus(200)
 })
-app_mars.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
-  const message: Message = req.body
-  sendMessageToMarsUsers(message.username, transformToTransportMessage(message))
+app_mars.post('/receive', (req: { body: Message_from_transport }, res: { sendStatus: (arg0: number) => void }) => {
+  const message: Message_from_transport = req.body
+  sendMessageToMarsUsers(message.sender, message)
   res.sendStatus(200)
 })
 
@@ -151,17 +157,19 @@ function sendMessageToOtherUsers (username: string, message: Message): void {
   }
 }
 
-function sendMessageToMarsUsers (username: string, message: Message_to_transport): void {
+function sendMessageToMarsUsers (username: string, message: Message_from_transport): void {
   const msgString = JSON.stringify(message)
   for (const key in mars_users) {
-    console.log(`Message ${message.data} sent to Mars`)
-    if (key !== username) {
+      if (key !== username) {
       mars_users[key].forEach(element => {
+        console.log(`sent ${message.payload}`)
         element.ws.send(msgString)
       })
     }
   }
 }
+
+
 
 wss_earth.on('connection', (websocketConnection: WebSocket, req: Request) => {
   if (req.url.length === 0) {
@@ -232,11 +240,6 @@ wss_mars.on('connection', (websocketConnection: WebSocket, req: Request) => {
 
   websocketConnection.on('message', (messageString: string) => {
     console.log('[message] Received from ' + username + ': ' + messageString);
-
-    const message: Message_to_transport = JSON.parse(messageString)
-    message.sender = message.sender ?? username
-
-    void sendMessageToMarsUsers(message.sender ,message)
   });
 
   websocketConnection.on('close', (event: any) => {

@@ -49,22 +49,23 @@ function App() {
     // обработчик на получение сообщения
     ws.onmessage = function (event) {
       const message = JSON.parse(event.data) as Message;
+      console.log(`${message.sender}: ${message.payload}`)
     
       // Проверяем на специальный символ
-      if (message.data === TYPING_SYMBOL) {
+      if (message.payload === TYPING_SYMBOL) {
         // Пользователь печатает
         setTypingUsers(prev => 
-          [...new Set([...prev, message.username || ''])]
+          [...new Set([...prev, message.sender || ''])]
         );
-      } else if (message.data === '') {
+      } else if (message.payload === '') {
         // Пользователь прекратил печатать
         setTypingUsers(prev => 
-          prev.filter(user => user !== message.username)
+          prev.filter(user => user !== message.sender)
         );
-      } else if (message.data && !message.data.includes(TYPING_SYMBOL)) {
+      } else if (message.payload && !message.payload.includes(TYPING_SYMBOL)) {
         // Обычное сообщение - убираем пользователя из списка печатающих
         setTypingUsers(prev => 
-          prev.filter(user => user !== message.username)
+          prev.filter(user => user !== message.sender)
         );
         setMessageArray(prev => [...prev, message]);
       }

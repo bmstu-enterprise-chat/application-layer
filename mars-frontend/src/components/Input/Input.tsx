@@ -12,13 +12,13 @@ type InputProps = {
 
 export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
   const {login} = useUser();
-  const [message, setMessage] = useState<Message>({data: ''});
+  const [message, setMessage] = useState<Message>({payload: ''});
 
   // в инпуте делаем обработчик на изменение состояния инпута
   const handleChangeMessage = (event: any) => {
     const newMsg: Message = {
-      data: event.target.value,
-      username: login,
+      payload: event.target.value,
+      sender: login,
       send_time: String(new Date()),
     };
     setMessage(newMsg);
@@ -44,7 +44,7 @@ export const Input: React.FC<InputProps> = ({ws, setMessageArray}) => {
                 <input className="home-text25 inputvalue"
                   disabled
                   placeholder="Отправка сообщений с Марса недоступна"
-                  value={message.data}
+                  value={message.payload}
                   onChange={handleChangeMessage}
                   style={{width: '100%', minHeight:'30px', maxHeight:'300px', background: 'none', border: 'none'}}
                 />

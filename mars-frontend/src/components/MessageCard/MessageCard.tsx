@@ -28,12 +28,27 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
     }
   }
 
+  if (msg.sender === 'System') {
+    return (
+      <div className="system-message">
+        <div className={`system-message-content error'}`}>
+         
+            <span style={{color: '#ff4444'}}>⚠️ {msg.payload}</span>
+
+          <span className="system-message-time">
+            {msg.send_time ? formatTime(msg.send_time) : ''}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-          <div className={`${msg.username === login ? "msg--own" : "msg--alien"} msg--container`}>
-        <div className={`${msg.username === login ? "msg--own--reverse" : "msg--alien--reverse"} msg`}>
+          <div className={`${msg.sender === login ? "msg--own" : "msg--alien"} msg--container`}>
+        <div className={`${msg.sender === login ? "msg--own--reverse" : "msg--alien--reverse"} msg`}>
 
-    <div className={`home-card2 ${msg.username === login ? "msg--bg--own" : "msg--bg--alien"}`}>
+    <div className={`home-card2 ${msg.sender === login ? "msg--bg--own" : "msg--bg--alien"}`}>
       <div className="home-frame-card-header3">
         <div className="home-avatar-wrapper2">
           <div className="home-frame-avatar2">
@@ -47,7 +62,7 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
           </div>
         </div>
         <div className="home-text21">
-          <span className="home-text22 typographybody1">{msg.username ?? 'Аноним'}</span>
+          <span className="home-text22 typographybody1">{msg.sender ?? 'Аноним'}</span>
         </div>
       </div>
       <div className="home-frame-card-content3">
@@ -59,13 +74,9 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
       </div>
       <div className="home-frame-card-content4">
         <div className="home-frame-typography6">
-          {msg.error ?
-            <div style={{color: 'gray'}}>Ошибка при отправке: {msg.error}</div>
-            :
             <span className={`msg--text home-text24 typographybody2`}>
-              {msg.data}
+              {msg.payload}
             </span>          
-          }         
         </div>
       </div>
     </div>
