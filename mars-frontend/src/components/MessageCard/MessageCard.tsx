@@ -31,10 +31,12 @@ export const MessageCard: React.FC<MessageProps> = ({msg}) => {
   if (msg.sender === 'System') {
     return (
       <div className="system-message">
-        <div className={`system-message-content error'}`}>
-         
-            <span style={{color: '#ff4444'}}>⚠️ {msg.payload}</span>
-
+        <div className={`system-message-content ${msg.error ? 'error' : 'success'}`}>
+          {msg.error ? (
+            <span style={{color: '#FF8B8C'}}>⚠️ {msg.errormsg}</span>
+          ) : (
+            <span style={{color: '#4CAF50'}}>✓ {msg.payload}</span>
+          )}
           <span className="system-message-time">
             {msg.send_time ? formatTime(msg.send_time) : ''}
           </span>

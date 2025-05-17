@@ -557,16 +557,17 @@
 }
  
 .typographyh5 {
-  font-size: 24px;
+  font-size: 20px;
   font-style: normal;
   font-family: Roboto;
   font-weight: 400px;
   font-stretch: normal;
   letter-spacing: 0px;
+  text-align: center !important;
 }
  
 .typographyh6 {
-  font-size: 20px;
+  font-size: 18px;
   font-style: normal;
   font-family: Roboto;
   font-weight: 500px;
@@ -611,7 +612,6 @@
 }
  
 .inputvalue {
-  color: white;
   font-size: 16px;
   font-style: normal;
   font-family: Roboto;
@@ -713,7 +713,7 @@
 .home-frame1 {
   width: 100%;
   height: auto;
-  min-height: inherit;
+  min-height: 100vh;
   display: flex;
   overflow: hidden;
   position: relative;
@@ -837,11 +837,11 @@
   padding-bottom: 0px;
   align-items: center;
   flex-shrink: 0;
-  width: 540px;
+  width: 100%;
 }
  
 .home-content1 {
-  width: 520px;
+  width: 100%;
   display: flex;
   flex-grow: 1;
   align-items: flex-start;
@@ -861,7 +861,7 @@
   color: rgb(255, 255, 255);
   height: auto;
   align-self: stretch;
-  text-align: left;
+  text-align: center;
   line-height: 142.99999475479126%;
 }
  
@@ -871,7 +871,7 @@
   padding: 16px;
   align-items: flex-start;
   flex-direction: column;
-  width: 540px;
+  width: 90%;
 }
  
 .home-form {
@@ -943,21 +943,6 @@
   height: auto;
   text-align: left;
   line-height: 26px;
-}
- 
-.home-frame2 {
-  width: 100%;
-  height: auto;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-between;
-  gap:10px;
-  flex-shrink: 0;
-  z-index: 1;
-  flex-grow: 1;
 }
  
 .home-rectangle12 {
@@ -1055,16 +1040,6 @@
   line-height: 160.0000023841858%;
 }
  
-.home-lg1200px {
-  min-width: 340px;
-  max-width: 610px;
-  width:auto;
-  display: flex;
-  padding: 10px 10px;
-  align-items: center;
-  flex-direction: column;
-}
- 
 .home-title {
   gap: 16px;
   display: flex;
@@ -1086,7 +1061,6 @@
   align-self: stretch;
   align-items: flex-start;
   flex-direction: column;
-  width: fit-content;
 }
  
 .home-minheight {
@@ -1103,17 +1077,25 @@
   width: 100%;
   height: 1px;
   align-self: stretch;
-  color:white;
 }
  
 .home-jobs-xs12md8 {
-  gap: 24px;
+  max-height: 64vh; /* Changed from fixed pixel value to viewport height */
+  overflow-y: auto;
+  width: 100%;
+  flex-grow: 1;
+  padding: 0 10px;
+}
+
+.home-frame2 {
+  height: calc(100vh - 74px);
+  width: 100vw;
   display: flex;
-  align-self: stretch;
-  align-items: center;
   flex-direction: column;
-  max-height: 610px;
-    overflow-y: scroll;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  align-items: center;
 }
  
 .home-card1 {
@@ -1247,6 +1229,7 @@
   border-radius: 4px;
   flex-direction: column;
   background-color: rgba(255, 255, 255, 1);
+  padding: 5px;
 }
  
 .home-frame-card-header3 {
@@ -1360,25 +1343,14 @@
   line-height: 142.99999475479126%;
 }
  
-.home-frame3 {
-  min-width: 340px;
-  max-width: 610px;
-  width:100%;
-  height: 125px;
-  display: flex;
-  padding: 20px 13px;
-  overflow: hidden;
-  align-items: center;
-  flex-shrink: 0;
-}
- 
 .home-frame-text-field-multiline {
-  width: 377px;
+  width: 100%;
   display: flex;
   flex-grow: 1;
   align-items: flex-start;
   flex-shrink: 0;
   flex-direction: column;
+  margin-bottom: 10px;
 }
  
 .home-frame-text-field2 {
@@ -1443,6 +1415,7 @@
 }
  
 .home-frame-button2 {
+  width: 100%;
   display: flex;
   padding: 8px 22px;
   overflow: hidden;
@@ -1466,4 +1439,79 @@
   height: auto;
   text-align: left;
   line-height: 26px;
+}
+
+/* Base mobile styles */
+
+.home-lg1200px {
+  width: 95%;
+  max-width: 100%;
+  padding: 5px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  z-index: 5;
+  align-items: center;
+}
+
+.home-frame3 {
+  width: 95%;
+  padding: 10px;
+  flex-direction: column;
+  height: auto;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .home-lg1200px {
+    width: 80%;
+    padding: 10px;
+  }
+  
+  .home-jobs-xs12md8 {
+    max-height: 64vh;
+    max-width: 60%;
+  }
+  
+  .home-frame3 {
+    flex-direction: row;
+    height: 125px;
+    max-width: 50%;
+  }
+  
+  .home-frame-text-field-multiline {
+    width: 377px;
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+  
+  .home-frame-button2 {
+    width: auto;
+  }
+  
+  .msg {
+    max-width: 85%;
+    padding: 0.5em;
+  }
+
+  .home-card-content{
+    max-width: 30%;
+  }
+}
+
+/* Exit button positioning */
+.exit-button {
+  position: fixed !important;
+  right: 2%;
+  top: 50px;
+  background-color: #1E0000 !important;
+  z-index: 7;
+  height: fit-content;
+  margin: 1em;
 }

@@ -5,10 +5,9 @@ import ws, { type WebSocket } from 'ws';
 import exp from 'constants';
 
 const port_earth: number = 8001; // порт на котором будет развернут этот (вебсокет) сервер
-const port_mars: number = 8002; // порт на котором будет развернут этот (вебсокет) сервер
 const hostname = '0.0.0.0'; // адрес вебсокет сервера
 const transportLevelPort = 8080; // порт сервера транспортного уровня
-const transportLevelHostname = '10.147.17.22'; // адрес сервера транспортного уровня
+const transportLevelHostname = '10.147.17.233'; // адрес сервера транспортного уровня
 const TYPING_SYMBOL = '\u200B__TYPING__\u200B'; // Специальный символ для статуса "печатает"
 
 interface Message {
@@ -38,21 +37,13 @@ type Users = Record<string, Array<{
 
 const app_earth = express() // создание экземпляра приложения express
 const server_earth = http.createServer(app_earth) // создание HTTP-сервера
-const app_mars = express() // создание экземпляра приложения express
-const server_mars = http.createServer(app_mars) // создание HTTP-сервера
 
 // Используйте express.json() для парсинга JSON тела запроса
 app_earth.use(express.json())
-app_mars.use(express.json())
 
 app_earth.post('/receive', (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
   const message: Message = req.body
   sendMessageToOtherUsers(message.username, message)
-  res.sendStatus(200)
-})
-app_mars.post('/receive', (req: { body: Message_from_transport }, res: { sendStatus: (arg0: number) => void }) => {
-  const message: Message_from_transport = req.body
-  sendMessageToMarsUsers(message.sender, message)
   res.sendStatus(200)
 })
 
@@ -60,14 +51,9 @@ app_mars.post('/receive', (req: { body: Message_from_transport }, res: { sendSta
 server_earth.listen(port_earth, hostname, () => {
   console.log(`server_earth started at http://${hostname}:${port_earth}`)
 })
-server_mars.listen(port_mars, hostname, () => {
-  console.log(`server_mars started at http://${hostname}:${port_mars}`)
-})
 
 const wss_earth = new ws.WebSocketServer({ server: server_earth })
-const wss_mars = new ws.WebSocketServer({ server: server_mars })
 const users: Users = {}
-const mars_users: Users = {}
 
 function transformToTransportMessage(message: Message): Message_to_transport {
   return {
@@ -157,18 +143,6 @@ function sendMessageToOtherUsers (username: string, message: Message): void {
   }
 }
 
-function sendMessageToMarsUsers (username: string, message: Message_from_transport): void {
-  const msgString = JSON.stringify(message)
-  for (const key in mars_users) {
-      if (key !== username) {
-      mars_users[key].forEach(element => {
-        console.log(`sent ${message.payload}`)
-        element.ws.send(msgString)
-      })
-    }
-  }
-}
-
 
 
 wss_earth.on('connection', (websocketConnection: WebSocket, req: Request) => {
@@ -211,40 +185,5 @@ wss_earth.on('connection', (websocketConnection: WebSocket, req: Request) => {
     console.log(username, '[close] Соединение прервано', event)
 
     delete users.username
-  })
-})
-
-wss_mars.on('connection', (websocketConnection: WebSocket, req: Request) => {
-  if (req.url.length === 0) {
-    console.log(`Error: req.url = ${req.url}`)
-    return
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const url = new URL(req?.url, `http://${req.headers.host}`)
-  const username = url.searchParams.get('username')
-
-  if (username !== null) {
-    console.log(`[open] Connected, username: ${username}`)
-
-    if (username in mars_users) {
-      mars_users[username] = [...mars_users[username], { id: mars_users[username].length, ws: websocketConnection }]
-    } else {
-      mars_users[username] = [{ id: 1, ws: websocketConnection }]
-    }
-  } else {
-    console.log('[open] Connected')
-  }
-
-  console.log('users collection', mars_users)
-
-  websocketConnection.on('message', (messageString: string) => {
-    console.log('[message] Received from ' + username + ': ' + messageString);
-  });
-
-  websocketConnection.on('close', (event: any) => {
-    console.log(username, '[close] Соединение прервано', event)
-
-    delete mars_users.username
   })
 })

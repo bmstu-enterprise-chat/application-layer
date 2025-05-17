@@ -80,9 +80,9 @@ function App() {
     ws.onerror = function (event) {
       console.error('WebSocket error:', event);
       setMessageArray(prev => [...prev, {
-        username: 'System',
-        data: 'Connection error occurred',
-        error: 'Connection error',
+        sender: 'System',
+        errormsg: 'Connection error occurred',
+        error: true,
         send_time: new Date().toISOString()
       }]);
     };

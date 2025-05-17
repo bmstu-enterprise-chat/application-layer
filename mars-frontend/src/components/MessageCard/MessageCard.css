@@ -65,16 +65,16 @@
   }
 
   .system-message-content.error {
-    background-color: #ffebee;
+    background-color: #c0001d;
   }
 
   .system-message-content.success {
-    background-color: #e8f5e9;
+    background-color: #00860b;
   }
 
   .system-message-time {
     display: block;
     font-size: 0.75rem;
-    color: #757575;
+    color: #f1f1f1;
     margin-top: 4px;
   }

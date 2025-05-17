@@ -106,11 +106,6 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
       <Button variant="contained"
                   className="exit-button"
                   onClick={handleClickLogoutBtn}
-                  style={{
-                  height: 'fit-content',
-                  margin: '1em',
-                  zIndex:3
-                  }}
                 >
                 Выход
       </Button>
