@@ -89,7 +89,7 @@ const sendMsgToTransportLevel = async (message: Message, retries = 0, verbose : 
 
   } catch (error) {
     if (verbose === true){
-      console.error(`Transport layer error`);
+      console.error(`Transport layer error: ${error}`);
     }
     console.error(`Transport layer error`);
     // Prepare error message for Earth client
@@ -99,7 +99,6 @@ const sendMsgToTransportLevel = async (message: Message, retries = 0, verbose : 
       error: getTransportErrorText(error),
       data: getTransportErrorText(error)
     };
-    console.log(`${message.username} about to get a call`)
     users[message.username]?.forEach(element => {
       console.log(`${element.id}} got a call: ${errorMsg.data}`)
       element.ws.send(JSON.stringify(errorMsg));
@@ -122,7 +121,7 @@ function getTransportErrorText(error: any): string {
       return 'Сообщение не отправлено (404)';
     } else if (error.response?.status===408) {
       return 'Ошибка формата пересылки данных';
-    } else if (error.code === 'EHOSTUNREACH') {
+    } else if (error.code === 'EHOSTUNREACH' || error.code==='ECONNREFUSED') {
       return 'Транспортный сервер недоступен';
     } else{
       return `Ошибка ${error.code}: ${error.name}`;

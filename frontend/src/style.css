@@ -1219,6 +1219,8 @@
   border-radius: 4px;
   flex-direction: column;
   background-color: rgba(255, 255, 255, 1);
+  width: 100% !important; /* Take full width of parent */
+  box-sizing: border-box; /* Include padding in width calculation */
   padding: 5px;
 }
  
@@ -1311,18 +1313,11 @@
 }
  
 .home-frame-card-content4 {
-  display: flex;
-  padding: 8px;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-direction: column;
+  width: 100%; /* Take full width of parent */
 }
  
 .home-frame-typography6 {
-  display: flex;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-direction: column;
+  width: 100%;
 }
  
 .home-text24 {

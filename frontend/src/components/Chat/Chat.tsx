@@ -89,7 +89,8 @@ export const Chat: React.FC<ChatProps> = ({messages, ws, messageArray, setMessag
           minHeight: '20px',
           color: 'gray',
           fontStyle: 'italic',
-          margin: '0.5em 0'
+          margin: '0.5em 0',
+          zIndex: 5
         }}>
         {typingUsers.length > 0 && (
           typingUsers.length === 1 
